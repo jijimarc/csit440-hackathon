@@ -19,7 +19,11 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('dashboard_app.urls', namespace="dashboard_app")),
+
+    # LOGIN FIRST (homepage)
+    path('', include('login_app.urls', namespace="login_app")),
+
+    # OTHER PAGES
+    path('dashboard/', include('dashboard_app.urls', namespace="dashboard_app")),
     path('register/', include('register_app.urls', namespace="register_app")),
-    path('login/', include('login_app.urls', namespace="login_app")),
 ]
