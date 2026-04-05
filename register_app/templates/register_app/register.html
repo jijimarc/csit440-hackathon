@@ -73,7 +73,10 @@
                 {% if messages %}
                     <ul class="messages">
                         {% for message in messages %}
-                            <li class="{{ message.tags }}">{{ message }}</li>
+                            <li class="{{ message.tags }}">
+                                <i class="fas {% if 'success' in message.tags %}fa-check-circle{% elif 'error' in message.tags %}fa-exclamation-circle{% else %}fa-info-circle{% endif %}"></i>
+                                {{ message }}
+                            </li>
                         {% endfor %}
                     </ul>
                 {% endif %}
@@ -83,39 +86,30 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="first_name">First Name</label>
+                            <label for="{{ form.first_name.id_for_label }}">First Name</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-user input-icon"></i>
-                                <input type="text"
-                                       id="first_name"
-                                       name="first_name"
-                                       placeholder="First name"
-                                       required>
+                                {{ form.first_name }}
                             </div>
+                            {{ form.first_name.errors }}
                         </div>
                         <div class="form-group">
-                            <label for="last_name">Last Name</label>
+                            <label for="{{ form.last_name.id_for_label }}">Last Name</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-user input-icon"></i>
-                                <input type="text"
-                                       id="last_name"
-                                       name="last_name"
-                                       placeholder="Last name"
-                                       required>
+                                {{ form.last_name }}
                             </div>
+                            {{ form.last_name.errors }}
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Email Address</label>
+                        <label for="{{ form.email.id_for_label }}">Email Address</label>
                         <div class="input-wrapper">
                             <i class="fas fa-envelope input-icon"></i>
-                            <input type="email"
-                                   id="email"
-                                   name="email"
-                                   placeholder="firstname.lastname@cit.edu"
-                                   required>
+                            {{ form.email }}
                         </div>
+                        {{ form.email.errors }}
                     </div>
 
                     <div class="form-row">
@@ -127,6 +121,7 @@
                                        id="contact_number"
                                        name="contact_number"
                                        placeholder="09xx xxx xxxx"
+                                       value="{{ contact_number|default:'' }}"
                                        required>
                             </div>
                         </div>
@@ -135,9 +130,9 @@
                             <div class="input-wrapper">
                                 <i class="fas fa-user-graduate input-icon"></i>
                                 <select id="user_type" name="user_type" required>
-                                    <option value="" disabled selected>User Type</option>
-                                    <option value="student">Student</option>
-                                    <option value="alumni">Alumni</option>
+                                    <option value="" disabled {% if not user_type %}selected{% endif %}>User Type</option>
+                                    <option value="student" {% if user_type == 'student' %}selected{% endif %}>Student</option>
+                                    <option value="alumni" {% if user_type == 'alumni' %}selected{% endif %}>Alumni</option>
                                 </select>
                             </div>
                         </div>
@@ -145,31 +140,31 @@
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="password">Password</label>
+                            <label for="{{ form.password1.id_for_label }}">Password</label>
                             <div class="input-wrapper password-toggle">
                                 <i class="fas fa-lock input-icon"></i>
-                                <input type="password"
-                                       id="password"
-                                       name="password"
-                                       placeholder="••••••••"
-                                       required>
-                                <i class="fas fa-eye toggle-password" data-target="password"></i>
+                                {{ form.password1 }}
+                                <i class="fas fa-eye toggle-password" data-target="{{ form.password1.id_for_label }}"></i>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="confirm_password">Confirm Password</label>
+                            <label for="{{ form.password2.id_for_label }}">Confirm</label>
                             <div class="input-wrapper password-toggle">
                                 <i class="fas fa-lock input-icon"></i>
-                                <input type="password"
-                                       id="confirm_password"
-                                       name="confirm_password"
-                                       placeholder="••••••••"
-                                       required>
-                                <i class="fas fa-eye toggle-password" data-target="confirm_password"></i>
+                                {{ form.password2 }}
+                                <i class="fas fa-eye toggle-password" data-target="{{ form.password2.id_for_label }}"></i>
                             </div>
                         </div>
                     </div>
+
+                    {% if form.non_field_errors %}
+                        <div class="messages">
+                            {% for error in form.non_field_errors %}
+                                <li class="error"><i class="fas fa-exclamation-circle"></i> {{ error }}</li>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
 
                     <button type="submit" class="register-btn">Sign Up</button>
                 </form>
@@ -212,19 +207,12 @@
             });
 
             // Prevent copy-paste on confirm password field
-            const confirmPasswordInput = document.getElementById('confirm_password');
-            if (confirmPasswordInput) {
-                confirmPasswordInput.addEventListener('paste', function(e) {
-                    e.preventDefault();
-                });
-                confirmPasswordInput.addEventListener('copy', function(e) {
-                    e.preventDefault();
-                });
-                confirmPasswordInput.addEventListener('cut', function(e) {
-                    e.preventDefault();
-                });
-            }
-
+            const confirmPasswords = document.querySelectorAll('input[type="password"]');
+            confirmPasswords.forEach(input => {
+                if (input.name.includes('password2') || input.id.includes('password2')) {
+                    input.addEventListener('paste', e => e.preventDefault());
+                }
+            });
         });
     </script>
 </body>
