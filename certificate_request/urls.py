@@ -19,11 +19,11 @@ from django.urls import include, path
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
-    # LOGIN FIRST (homepage)
+    
     path('', include('login_app.urls', namespace="login_app")),
-
-    # OTHER PAGES
     path('dashboard/', include('dashboard_app.urls', namespace="dashboard_app")),
     path('register/', include('register_app.urls', namespace="register_app")),
+
+    # TEMPORARY STUBS — replace with real apps when ready
+    path('requests/', include('dashboard_app.stub_urls', namespace="certificate_request")),
 ]
