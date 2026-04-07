@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.models import User
 
@@ -32,4 +32,6 @@ def login_view(request):
 def forgot_password(request):
     return render(request, 'login_app/forgot_password.html')
 
-    
+def logout_view(request):
+    logout(request)
+    return redirect('login_app:login')    
