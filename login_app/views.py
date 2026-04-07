@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib import messages
-from django.contrib.auth.models import User
+
+User = get_user_model()
 
 # Create your views here.
 def login_view(request):
@@ -22,7 +23,7 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect('dashboard_app:home')
+            return redirect('dashboard_app:dashboard')
         else:
             messages.error(request, "Invalid email/username or password.")
             return render(request, 'login_app/login.html')
