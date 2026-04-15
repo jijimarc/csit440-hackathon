@@ -45,10 +45,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Project Apps 
+    'core_app',
+    'transactions_app',
     'dashboard_app',
-    'register_app',
-    'login_app',
-    
 ]
 
 MIDDLEWARE = [
@@ -66,7 +65,7 @@ ROOT_URLCONF = 'certificate_request.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],  
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -131,15 +130,19 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
 
+# This tells Django to look for the 'static' folder in your root directory
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'register_app.CustomUser'
+AUTH_USER_MODEL = 'core_app.CustomUser'
+LOGIN_URL = 'core:login'

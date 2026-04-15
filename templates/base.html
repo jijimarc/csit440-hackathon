@@ -1,0 +1,199 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    
+    <title>{% block title %}CertiRequest — Dashboard{% endblock %}</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v={{ now|date:'U' }}">
+    <link rel="stylesheet" href="{% static 'css/base_html.css' %}?v={{ now|date:'U' }}">
+    <link rel="stylesheet" href="{% static 'css/request_modal.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+    
+    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/en/8/8c/Cebu_Institute_of_Technology_University_logo.png">
+</head>
+<body>
+
+    <div class="overlay" id="overlay"></div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="school-logo"></div>
+        <div class="sidebar-header">
+            <h2><span>Certi</span>Request</h2>
+            <p>Document Request Portal</p>
+        </div>
+
+        <nav class="nav-menu">
+            <span class="nav-section-label">Main</span>
+
+            <a href="{% url 'dashboard_app:dashboard' %}" class="nav-item active">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+
+            <a href="#" onclick="openModal(event, 'newRequestModal')" class="nav-item">
+                <i class="fas fa-plus-circle"></i> New Request
+            </a>
+
+            <a href="#" class="nav-item">
+                <i class="fas fa-file-alt"></i> My Requests
+            </a>
+
+            <a href="#" class="nav-item">
+                <i class="fas fa-map-marker-alt"></i> Track Request
+            </a>
+
+            <a href="#" class="nav-item">
+                <i class="fas fa-wallet"></i> Payments
+                </a>
+
+            <a href="#" class="nav-item">
+                <i class="fas fa-folder-open"></i> My Documents
+            </a>
+
+            <div class="nav-divider"></div>
+            <span class="nav-section-label">Account</span>
+
+            {% comment %} <a href="{% url 'dashboard_app:profile' %}" class="nav-item">
+                <i class="fas fa-user-cog"></i> Profile Settings
+            </a> {% endcomment %}
+
+            <a href="{% url 'dashboard_app:help' %}" class="nav-item">
+                <i class="fas fa-question-circle"></i> Help & Support
+            </a>
+
+            <div class="nav-divider"></div>
+
+            <a href="#" class="nav-item logout-item" id="sidebarLogoutBtn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </nav>
+    </div>
+
+    <div class="main-content" id="mainContent">
+
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="alert {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' or message.tags == 'danger' %}alert-danger{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %}">
+                <div class="alert-content">
+                    <span class="alert-icon">
+                        {% if message.tags == 'success' %}✅{% elif message.tags == 'error' or message.tags == 'danger' %}❌{% elif message.tags == 'warning' %}⚠️{% else %}ℹ️{% endif %}
+                    </span>
+                    <span class="alert-text">{{ message }}</span>
+                    <button class="alert-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="top-bar">
+            <div class="top-bar-left">
+                <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                <button class="nav-visibility-toggle" id="navToggle" title="Hide sidebar"><i class="fas fa-angle-double-left"></i></button>
+            </div>
+            <div class="user-info">
+                <div class="notification-icon" id="notifBtn" title="Notifications">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div class="user-avatar" id="profileBtn" title="{{ request.user.get_full_name }}">
+                    {% if request.user.first_name and request.user.last_name %}
+                        {{ request.user.first_name|slice:":1"|upper }}{{ request.user.last_name|slice:":1"|upper }}
+                    {% else %}
+                        ST
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="content-area">
+            {% block content %}
+            {% endblock %}
+        </div>
+
+    </div>
+
+    <div id="logoutModal" class="modal">
+        <div class="modal-content logout-card">
+            <div class="logout-icon-wrapper"><i class="fas fa-sign-out-alt"></i></div>
+            <h2 class="logout-title">Signing Out?</h2>
+            <div class="modal-buttons">
+                <button id="cancelLogout" class="btn-secondary" onclick="closeModal('logoutModal')">Cancel</button>
+                <button id="confirmLogout" class="btn-primary">Yes, Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="newRequestModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="card-title">New Document Request</h3>
+                <button class="close-btn" onclick="closeModal('newRequestModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="#">
+                    {% csrf_token %}
+                    
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label style="display: block; margin-bottom: 8px;">Document Type <span style="color:red">*</span></label>
+                        <select name="document_type" class="form-control" style="width: 100%; padding: 8px;" required>
+                            <option value="" disabled selected>Select a document...</option>
+                            <option value="transcript">Transcript of Records</option>
+                            <option value="diploma">Diploma</option>
+                            <option value="certificate">Certificate of Enrollment</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label style="display: block; margin-bottom: 8px;">Urgency Level <span style="color:red">*</span></label>
+                        <select name="urgency_level" class="form-control" style="width: 100%; padding: 8px;" required>
+                            <option value="Standard">Standard Processing</option>
+                            <option value="Rush">Rush Processing (Additional Fee)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label style="display: block; margin-bottom: 8px;">Purpose of Request <span style="color:red">*</span></label>
+                        <textarea name="purpose_of_request" class="form-control" rows="3" style="width: 100%; padding: 8px;" placeholder="e.g., For employment, board examination, etc." required></textarea>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label style="display: block; margin-bottom: 8px;">Delivery Mode <span style="color:red">*</span></label>
+                        <select name="delivery_mode" id="deliveryModeSelect" class="form-control" style="width: 100%; padding: 8px;" required>
+                            <option value="Pickup">Campus Pick-up</option>
+                            <option value="Courier">Courier Delivery</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="shippingAddressGroup" style="margin-bottom: 16px;">
+                        <label style="display: block; margin-bottom: 8px;">Shipping Address</label>
+                        <textarea name="shipping_address" class="form-control" rows="2" style="width: 100%; padding: 8px;" placeholder="Leave blank if picking up on campus."></textarea>
+                    </div>
+
+                    <div class="modal-footer" style="margin-top: 24px;">
+                        <button type="button" class="btn-sm btn-outline" onclick="closeModal('newRequestModal')">Cancel</button>
+                        <button type="submit" class="btn-sm btn-primary">Submit Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.DASHBOARD_URLS = {
+            notificationsApi: "{% url 'dashboard_app:student_notifications_api' %}",
+            clearNotificationsApi: "{% url 'dashboard_app:clear_student_notifications_api' %}",
+            logoutUrl: "{% url 'core:logout' %}" 
+        };
+    </script>
+    <script src="{% static 'js/base_dashboard.js' %}"></script>
+    
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>
