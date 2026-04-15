@@ -392,7 +392,6 @@ input[type="password"]::placeholder {
 	z-index: 1;
 }
 
-/* Login Link */
 .login-link {
 	text-align: center;
 	color: #555555;
@@ -412,7 +411,6 @@ input[type="password"]::placeholder {
 	text-decoration: underline;
 }
 
-/* Footer */
 .footer-text {
 	text-align: center;
 	margin-top: 15px;
@@ -420,7 +418,7 @@ input[type="password"]::placeholder {
 	font-size: 11px;
 }
 
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 1024px) {
 	.register-wrapper {
 		flex-direction: column;
