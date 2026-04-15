@@ -7,7 +7,7 @@
     <meta name="google-site-verification" content="K6WPHGXLZHpw4KwgdqfPTJddG3Sc2IpLDA0Xfeg9x8Q" />
     <title>CertiRequest - Sign In</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'login_app/css/login.css' %}?v={{ now|date:'U' }}">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}?v={{ now|date:'U' }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -85,7 +85,7 @@
                 {% endif %}
 
                 {% if show_change_password %}
-                    <form method="POST" action="{% url 'login_app:login' %}">
+                    <form method="POST" action="{% url 'core:login' %}">
                         {% csrf_token %}
                         <input type="hidden" name="temp_username" value="{{ temp_username }}">
                         <input type="hidden" name="temp_role" value="{{ temp_role }}">
@@ -119,7 +119,7 @@
                         <button type="submit" name="change_password" class="login-btn">Update Password</button>
                     </form>
                 {% else %}
-                    <form method="POST" action="{% url 'login_app:login' %}">
+                    <form method="POST" action="{% url 'core:login' %}">
                         {% csrf_token %}
 
                         <div class="form-group">
@@ -152,7 +152,7 @@
                                 <input type="checkbox" id="remember" name="remember">
                                 <span>Remember me</span>
                             </label>
-                            <a href="{% url 'login_app:forgot_password' %}" class="forgot-password">
+                            <a href="{% url 'core:forgot_password' %}" class="forgot-password">
                                 Forgot password?
                             </a>
                         </div>
@@ -166,7 +166,7 @@
                 </div>
 
                 <div class="register-link">
-                    Don't have an account? <a href="{% url 'register_app:register' %}">Sign up</a>
+                    Don't have an account? <a href="{% url 'core:register' %}">Sign up</a>
                 </div>
 
                 <div class="footer-text" style="line-height: 1.6;">

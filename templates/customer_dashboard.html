@@ -1,0 +1,229 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Dashboard | CertiRequest{% endblock %}
+
+{% block content %}
+    <div class="welcome-section">
+        <div class="welcome-text">
+            <h1>Welcome back, <span>{{ request.user.first_name }}!</span></h1>
+            <p>Here's what's happening with your document requests today.</p>
+        </div>
+        <div class="welcome-badge">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+            Verified Account
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon-wrapper icon-blue">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ total_requests|default:"0" }}</div>
+                <div class="stat-label">Total Requests</div>
+            </div>
+            {% if new_this_month %}
+            <div class="stat-trend trend-up">+{{ new_this_month }} this month</div>
+            {% endif %}
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon-wrapper icon-gold">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ pending_requests|default:"0" }}</div>
+                <div class="stat-label">Pending Review</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon-wrapper icon-green">
+                <i class="fas fa-check-double"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ completed_requests|default:"0" }}</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon-wrapper icon-orange">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">&#8369;{{ total_payments_received|default:"0" }}</div>
+                <div class="stat-label">Payments Made</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+
+        <div class="card">
+            <div class="card-header">
+                <div class="header-title-group">
+                    <div class="card-icon">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <h3 class="card-title">Recent Requests</h3>
+                    <span class="badge-count">{{ recent_requests|length }} total</span>
+                </div>
+                <div class="header-actions">
+                    <a href="#" class="btn-sm btn-outline">View All</a>
+                </div>
+            </div>
+
+            {% if recent_requests %}
+            <table class="request-table">
+                <thead>
+                    <tr>
+                        <th>Document Type</th>
+                        <th>Submitted</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in recent_requests %}
+                    <tr>
+                        <td>
+                            <span class="request-type-badge">
+                                <i class="fas fa-file"></i> {{ req.document_type }}
+                            </span>
+                        </td>
+                        <td>{{ req.submitted_at|date:"M j, Y" }}</td>
+                        <td>
+                            <span class="status-badge status-{{ req.status|lower }}">
+                                {{ req.status }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="#" class="table-action-btn" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon-circle">
+                    <i class="fas fa-folder-open" style="font-size: 24px;"></i>
+                </div>
+                <h3>No requests yet</h3>
+                <p>You haven't submitted any document requests. Start your first one now.</p>
+                <a href="#" onclick="openModal(event, 'newRequestModal')" class="btn-sm btn-primary">
+                    + Submit a Request
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+
+            <div class="card" style="animation-delay: 0.4s;">
+                <div class="card-header" style="border-bottom: 1px solid #E2E8F0; padding-bottom: 12px; margin-bottom: 16px;">
+                    <div class="header-title-group">
+                        <h3 class="card-title">My Profile</h3>
+                    </div>
+                </div>
+                
+                <div class="profile-summary">
+                    <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+                        <div class="user-avatar" style="width: 56px; height: 56px; font-size: 20px; flex-shrink: 0; background: #1E3A8A; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600;">
+                            {{ request.user.fullname|slice:":2"|upper|default:"ST" }}
+                        </div>
+                        <div>
+                            <h4 style="margin: 0 0 4px 0; color: #1E293B; font-size: 16px; font-weight: 600;">
+                                {{ request.user.fullname|default:"Student Name" }}
+                            </h4>
+                            <span style="background: #E0E7FF; color: #4338CA; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600;">
+                                {{ request.user.customer.get_customer_status_display|default:"Student" }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 16px; font-size: 14px;">
+                        <div style="display: flex; align-items: flex-start; gap: 12px;">
+                            <div style="background: #F1F5F9; padding: 8px; border-radius: 8px; color: #64748B;">
+                                <i class="fas fa-id-card" style="width: 16px; text-align: center;"></i>
+                            </div>
+                            <div style="padding-top: 2px;">
+                                <div style="color: #64748B; font-size: 12px; margin-bottom: 2px;">ID Number</div>
+                                <div style="color: #334155; font-weight: 500;">{{ request.user.customer.student_id_number|default:"Not set" }}</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; align-items: flex-start; gap: 12px;">
+                            <div style="background: #F1F5F9; padding: 8px; border-radius: 8px; color: #64748B;">
+                                <i class="fas fa-envelope" style="width: 16px; text-align: center;"></i>
+                            </div>
+                            <div style="padding-top: 2px;">
+                                <div style="color: #64748B; font-size: 12px; margin-bottom: 2px;">Email Address</div>
+                                <div style="color: #334155; font-weight: 500;">{{ request.user.email }}</div>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: flex-start; gap: 12px;">
+                            <div style="background: #F1F5F9; padding: 8px; border-radius: 8px; color: #64748B;">
+                                <i class="fas fa-building" style="width: 16px; text-align: center;"></i>
+                            </div>
+                            <div style="padding-top: 2px;">
+                                <div style="color: #64748B; font-size: 12px; margin-bottom: 2px;">Department</div>
+                                <div style="color: #334155; font-weight: 500;">{{ request.user.customer.department|default:"Not set" }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="card" style="animation-delay: 0.5s;">
+                <div class="card-header">
+                    <div class="header-title-group">
+                        <h3 class="card-title">Request Pipeline</h3>
+                    </div>
+                </div>
+                <div class="pipeline-list">
+                    {% if total_requests and total_requests > 0 %}
+                    <div class="pipeline-item">
+                        <span class="pipeline-label">Pending</span>
+                        <div class="pipeline-bar-track">
+                            <div class="pipeline-bar-fill gold" data-width="{% widthratio pending_requests total_requests 100 %}"></div>
+                        </div>
+                        <span class="pipeline-count">{{ pending_requests|default:"0" }}</span>
+                    </div>
+                    {% else %}
+                    <p style="font-size:13px; color:#8A9BBE; text-align:center; padding: 16px 0;">No requests to display.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card" style="animation-delay: 0.6s;">
+                <div class="card-header">
+                    <div class="header-title-group">
+                        <h3 class="card-title">Recent Activity</h3>
+                    </div>
+                </div>
+                <div class="activity-feed">
+                    {% for activity in recent_activities %}
+                        {% empty %}
+                    <p style="font-size:13px; color:#8A9BBE; text-align:center; padding: 20px 0;">No recent activity.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/customer_dashboard.js' %}"></script>
+{% endblock %}
