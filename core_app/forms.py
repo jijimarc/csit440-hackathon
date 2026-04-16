@@ -19,6 +19,11 @@ class UserRegistrationForm(UserCreationForm):
     ]
     customer_status = forms.ChoiceField(choices=USER_ROLE_CHOICES)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs) 
+        self.fields['password1'].widget.attrs['placeholder'] = '********'
+        self.fields['password2'].widget.attrs['placeholder'] = '********'
+
     class Meta(UserCreationForm.Meta):
         model = CustomUser
         fields = UserCreationForm.Meta.fields + ('fullname', 'email', 'contact_number')

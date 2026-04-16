@@ -11,7 +11,4 @@ urlpatterns = [
     path('auth/', include('core_app.urls')),
     path('dashboard/', include('dashboard_app.urls')),
     path('transactions/', include('transactions_app.urls')),
-    
-    # TEMPORARY STUBS
-    path('requests/', include('dashboard_app.stub_urls', namespace="certificate_request")),
 ]

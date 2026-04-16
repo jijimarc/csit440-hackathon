@@ -39,34 +39,26 @@
                 <i class="fas fa-plus-circle"></i> New Request
             </a>
 
-            <a href="#" class="nav-item">
+            <a href="{% url 'transactions_app:request_history' %}" class="nav-item">
                 <i class="fas fa-file-alt"></i> My Requests
             </a>
 
-            <a href="#" class="nav-item">
+            <a href="{% url 'transactions_app:track_request' %}" class="nav-item">
                 <i class="fas fa-map-marker-alt"></i> Track Request
             </a>
 
-            <a href="#" class="nav-item">
+            <a href="{% url 'transactions_app:payment' %}" class="nav-item">
                 <i class="fas fa-wallet"></i> Payments
                 </a>
 
-            <a href="#" class="nav-item">
+            
+            <a href="{% url 'transactions_app:request_history' %}" class="nav-item">
                 <i class="fas fa-folder-open"></i> My Documents
             </a>
-
-            <div class="nav-divider"></div>
-            <span class="nav-section-label">Account</span>
-
-            {% comment %} <a href="{% url 'dashboard_app:profile' %}" class="nav-item">
-                <i class="fas fa-user-cog"></i> Profile Settings
-            </a> {% endcomment %}
 
             <a href="{% url 'dashboard_app:help' %}" class="nav-item">
                 <i class="fas fa-question-circle"></i> Help & Support
             </a>
-
-            <div class="nav-divider"></div>
 
             <a href="#" class="nav-item logout-item" id="sidebarLogoutBtn">
                 <i class="fas fa-sign-out-alt"></i> Logout
@@ -136,7 +128,7 @@
                 <button class="close-btn" onclick="closeModal('newRequestModal')">&times;</button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="#">
+                <form method="POST" action="{% url 'transactions_app:submit_request' %}">
                     {% csrf_token %}
                     
                     <div class="form-group" style="margin-bottom: 16px;">

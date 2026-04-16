@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Track Request History | CertiRequest{% endblock %}
+
+{% block content %}
+    <div class="card" style="margin-top: 20px;">
+        <div class="card-header">
+            <div class="header-title-group">
+                <div class="card-icon" style="background-color: #FEF3C7; color: #D97706;">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h3 class="card-title">Active Request Tracking</h3>
+            </div>
+        </div>
+
+        <div style="padding: 24px;">
+            {% if active_requests %}
+                {% for req in active_requests %}
+                <div style="border: 1px solid #E2E8F0; border-radius: 8px; padding: 20px; margin-bottom: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+                        <div>
+                            <h4 style="margin: 0 0 4px 0; color: #1E293B;">Request #{{ req.id }} - {{ req.document.doc_name }}</h4>
+                            <span style="color: #64748B; font-size: 13px;">Requested on {{ req.date_requested|date:"F j, Y" }}</span>
+                        </div>
+                        <span class="status-badge status-{{ req.status|lower }}">{{ req.get_status_display }}</span>
+                    </div>
+
+                    <div class="pipeline-bar-track" style="height: 12px; background-color: #E2E8F0; border-radius: 10px; overflow: hidden; margin-bottom: 12px; position: relative;">
+                        <div class="pipeline-bar-fill {% if req.status == 'COMPLETED' %}green{% elif req.status == 'PROCESSING' %}gold{% endif %}" 
+                             style="height: 100%; transition: width 0.5s ease;
+                             {% if req.status == 'PENDING' %} width: 25%;
+                             {% elif req.status == 'VERIFIED' %} width: 50%;
+                             {% elif req.status == 'PROCESSING' %} width: 75%;
+                             {% elif req.status == 'COMPLETED' %} width: 100%;
+                             {% else %} width: 0%; {% endif %}">
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; font-size: 12px; color: #64748B; font-weight: 500;">
+                        <span>Pending</span>
+                        <span>Verified</span>
+                        <span>Processing</span>
+                        <span>Completed</span>
+                    </div>
+
+                    {% if req.completion_details.tracking_number and req.status == 'COMPLETED' %}
+                        <div style="margin-top: 20px; padding: 12px; background-color: #F8FAFC; border-radius: 6px; font-size: 14px;">
+                            <strong>Courier Tracking Number:</strong> <span style="color: #3B82F6;">{{ req.completion_details.tracking_number }}</span>
+                            <br>
+                            <strong>Est. Delivery:</strong> {{ req.completion_details.estimated_delivery_date|date:"M j, Y"|default:"TBD" }}
+                        </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon-circle" style="background-color: #FEF3C7; color: #D97706;">
+                        <i class="fas fa-search" style="font-size: 24px;"></i>
+                    </div>
+                    <h3>No active tracking</h3>
+                    <p>You don't have any active requests currently being processed.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

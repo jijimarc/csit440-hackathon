@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Payments | CertiRequest{% endblock %}
+
+{% block content %}
+    <div class="card" style="margin-top: 20px; max-width: 800px; margin-left: auto; margin-right: auto;">
+        <div class="card-header">
+            <div class="header-title-group">
+                <div class="card-icon" style="background-color: #DCFCE7; color: #16A34A;">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <h3 class="card-title">Submit Payment</h3>
+            </div>
+        </div>
+
+        <div style="padding: 24px;">
+            {% if pending_requests %}
+                <div style="background-color: #EFF6FF; border-left: 4px solid #3B82F6; padding: 16px; margin-bottom: 24px; border-radius: 4px; font-size: 14px; color: #1E3A8A;">
+                    <i class="fas fa-info-circle"></i> Please transfer the exact amount to the university's official bank account or GCash, and upload your receipt below.
+                </div>
+
+                <form method="POST" action="{% url 'transactions_app:submit_payment' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Select Request to Pay <span style="color:red">*</span></label>
+                        <select name="request_id" class="form-control" style="width: 100%; padding: 10px;" required>
+                            <option value="" disabled selected>Select an unpaid request...</option>
+                            {% for req in pending_requests %}
+                                <option value="{{ req.id }}">Request #{{ req.id }} - {{ req.document.doc_name }} (&#8369;{{ req.total_fee }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Reference Number <span style="color:red">*</span></label>
+                        <input type="text" name="reference_number" class="form-control" style="width: 100%; padding: 10px;" placeholder="e.g. 1234567890123" required>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 24px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 600;">Upload Proof of Payment (Image) <span style="color:red">*</span></label>
+                        <input type="file" name="proof_of_payment" accept="image/*" style="width: 100%; padding: 10px; border: 1px dashed #CBD5E1; border-radius: 6px; background-color: #F8FAFC;" required>
+                    </div>
+
+                    <button type="submit" class="btn-sm btn-primary" style="width: 100%; padding: 12px; font-size: 16px; justify-content: center;">
+                        <i class="fas fa-upload"></i> Submit Payment Proof
+                    </button>
+                </form>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon-circle" style="background-color: #DCFCE7; color: #16A34A;">
+                        <i class="fas fa-check-circle" style="font-size: 24px;"></i>
+                    </div>
+                    <h3>All caught up!</h3>
+                    <p>You have no pending requests that require payment at this time.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
