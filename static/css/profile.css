@@ -157,3 +157,76 @@
     background-color: #F1F5F9;
     color: #1E293B;
 }
+
+/* Password Validation Real-time Feedback */
+.password-validation-container {
+    display: none;
+    margin-top: 12px;
+    padding: 10px;
+    background: #F8FAFC;
+    border-radius: 6px;
+    border: 1px solid #E2E8F0;
+}
+
+.validation-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: #64748B;
+}
+
+.validation-item:last-child {
+    margin-bottom: 0;
+}
+
+.validation-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 16px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.validation-item.invalid .validation-icon {
+    color: #EF4444;
+}
+
+.validation-item.valid .validation-icon {
+    color: #10B981;
+}
+
+.validation-text {
+    color: #64748B;
+}
+
+.validation-item.invalid .validation-text {
+    color: #EF4444;
+}
+
+.validation-item.valid .validation-text {
+    color: #10B981;
+}
+
+/* Password Match Validation */
+.password-match-container {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #FEE2E2;
+    border-radius: 4px;
+    border-left: 3px solid #EF4444;
+}
+
+.match-error {
+    color: #DC2626;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Disable submit button styling */
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+

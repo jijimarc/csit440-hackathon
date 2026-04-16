@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
 from .models import CustomUser, Customer, Student, Alumni
+from .password_validators import validate_password_strength, validate_password_match
 
 class UserRegistrationForm(UserCreationForm):
     fullname = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'placeholder': 'John Doe'}))
@@ -27,6 +28,27 @@ class UserRegistrationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = CustomUser
         fields = UserCreationForm.Meta.fields + ('fullname', 'email', 'contact_number')
+
+    def clean_password1(self):
+        password1 = self.cleaned_data.get('password1')
+        if password1:
+            # Validate password strength
+            validation = validate_password_strength(password1)
+            if not validation['is_valid']:
+                raise forms.ValidationError(validation['errors'])
+        return password1
+
+    def clean_password2(self):
+        password1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
+        
+        if password1 and password2:
+            # Validate passwords match
+            match_result = validate_password_match(password1, password2)
+            if not match_result['is_valid']:
+                raise forms.ValidationError(match_result['error'])
+        
+        return password2
 
     @transaction.atomic
     def save(self, commit=True):
