@@ -113,15 +113,32 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="user_type">User Type</label>
+                            <label for="{{ form.customer_status.id_for_label }}">User Type</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-user-graduate input-icon"></i>
-                                <select id="user_type" name="user_type" required>
-                                    <option value="" disabled {% if not user_type %}selected{% endif %}>User Type</option>
-                                    <option value="student" {% if user_type == 'student' %}selected{% endif %}>Student</option>
-                                    <option value="alumni" {% if user_type == 'alumni' %}selected{% endif %}>Alumni</option>
-                                </select>
+                                {{ form.customer_status }}
                             </div>
+                            {{ form.customer_status.errors }}
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="margin-bottom: 15px;">
+                        <div class="form-group">
+                            <label for="{{ form.student_id_number.id_for_label }}">School ID Number</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-id-card input-icon"></i>
+                                {{ form.student_id_number }}
+                            </div>
+                            {{ form.student_id_number.errors }}
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="{{ form.department.id_for_label }}">Department</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-building input-icon"></i>
+                                {{ form.department }}
+                            </div>
+                            {{ form.department.errors }}
                         </div>
                     </div>
 

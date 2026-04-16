@@ -492,3 +492,17 @@ input[type="password"]::placeholder {
 		gap: 0;
 	}
 }
+/* Django Form Error Styling */
+ul.errorlist {
+	list-style-type: none; /* Removes the bullet points */
+	color: #d9534f;        /* Makes the text a nice alert red */
+	font-size: 0.75rem;    /* Shrinks the text down */
+	margin: 4px 0 0 0;     /* Removes the huge gap and adds a tiny space above */
+	padding: 0;            /* Removes the default list indentation */
+	text-align: left;
+}
+
+ul.errorlist li {
+	margin: 0;
+	padding: 0;
+}

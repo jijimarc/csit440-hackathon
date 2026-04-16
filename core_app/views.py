@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.contrib import messages
+from core_app.models import Alumni, Customer, Student
 from .forms import UserRegistrationForm
 
 User = get_user_model()
@@ -25,7 +26,7 @@ def login_view(request):
         else:
             messages.error(request, "Invalid email/username or password.")
             return render(request, 'login.html')
-            
+        
     return render(request, 'login.html')
 
 def forgot_password(request):
@@ -39,13 +40,26 @@ def register(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            email = form.cleaned_data.get('email')
-            messages.success(request, f'Account created for {email}! You can now log in.')
-            return redirect('core:login')
+            user = form.save(commit=False)
+            user.username = user.email 
+            user.save()
+
+            customer = Customer.objects.create(
+                user_id=user,
+                student_id_number=form.cleaned_data.get('student_id_number'),
+                department=form.cleaned_data.get('department'),
+                customer_status=form.cleaned_data.get('customer_status')
+            )
+
+            if customer.customer_status.upper() == 'ALUMNI':
+                Alumni.objects.create(
+                    user_id=customer,
+                    personal_email=user.email,
+                )
         else:
-            # ADD THIS LINE TO DEBUG:
-            print("FORM ERRORS:", form.errors)
+            Student.objects.create(
+                user_id=customer
+            )
     else:
         form = UserRegistrationForm()
         
