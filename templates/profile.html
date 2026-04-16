@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Profile | CertiRequest{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}?v={{ now|date:'U' }}">
+{% endblock %}
+
+{% block content %}
+<div class="profile-page-wrapper">
+    <div class="card profile-card">
+        <div class="card-header">
+            <div class="header-title-group">
+                <div class="card-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <h3 class="card-title">My Profile</h3>
+            </div>
+        </div>
+        
+        <div class="card-body profile-card-body">
+            <form method="POST" action="{% url 'dashboard_app:profile' %}" style="display: flex; flex-direction: column; height: 100%;">
+                {% csrf_token %}
+                
+                <div class="profile-grid">
+                    <div class="form-group profile-form-group">
+                        <label class="profile-label">Full Name</label>
+                        <div class="profile-value">{{ request.user.fullname }}</div>
+                    </div>
+
+                    <div class="form-group profile-form-group">
+                        <label class="profile-label">Email Address</label>
+                        <div class="profile-value">{{ request.user.email }}</div>
+                    </div>
+
+                    <div class="form-group profile-form-group">
+                        <label class="profile-label">User Type</label>
+                        <div class="profile-value">{{ request.user.customer.get_customer_status_display }}</div>
+                    </div>
+
+                    <div class="form-group profile-form-group">
+                        <label class="profile-label editable-label">Contact Number</label>
+                        <input type="text" name="contact_number" class="form-control profile-input" value="{{ request.user.contact_number|default:'' }}" required>
+                        <small class="profile-help-text">You can update your active contact number here.</small>
+                    </div>
+                </div>
+
+                {% if request.user.customer.customer_status == 'STUDENT' %}
+                    <div class="profile-details-section student-section">
+                        <h4 class="section-title"><i class="fas fa-graduation-cap"></i> Student Details</h4>
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <label class="detail-label">School ID Number</label>
+                                <div class="detail-value">{{ request.user.customer.student_id_number }}</div>
+                            </div>
+                            <div class="detail-item">
+                                <label class="detail-label">Department</label>
+                                <div class="detail-value">{{ request.user.customer.department }}</div>
+                            </div>
+                        </div>
+                    </div>
+                {% elif request.user.customer.customer_status == 'ALUMNI' %}
+                    <div class="profile-details-section alumni-section">
+                        <h4 class="section-title"><i class="fas fa-user-graduate"></i> Alumni Details</h4>
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <label class="detail-label">Year of Graduation</label>
+                                <div class="detail-value">{{ request.user.customer.alumni.year_of_graduation|date:"Y" }}</div>
+                            </div>
+                            <div class="detail-item">
+                                <label class="detail-label">Personal Email</label>
+                                <div class="detail-value">{{ request.user.customer.alumni.personal_email }}</div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="profile-actions">
+                    <button type="button" class="btn-sm btn-outline change-password-btn" onclick="alert('Change Password feature is coming soon!')">
+                        <i class="fas fa-lock"></i> Change Password
+                    </button>
+                    <button type="submit" class="btn-sm btn-primary">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
