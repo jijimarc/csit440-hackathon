@@ -13,6 +13,7 @@ urlpatterns = [
     
     # Account Pages
     path('profile/', views.profile, name='profile'),
+    path('profile/change-password/', views.change_password, name='change_password'),
     path('help/', views.help, name='help'),
     
     # JavaScript APIs

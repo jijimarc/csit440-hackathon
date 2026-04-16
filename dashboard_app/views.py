@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import update_session_auth_hash
+from django.contrib import messages
 from django.http import JsonResponse
+from core_app.password_validators import validate_password_strength, validate_password_match
 
 # ROUTER VIEW
 @login_required
@@ -34,6 +37,40 @@ def profile(request):
             return redirect('dashboard_app:profile')
 
     return render(request, 'profile.html')
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        old_password = request.POST.get('old_password', '').strip()
+        new_password = request.POST.get('new_password', '').strip()
+        confirm_password = request.POST.get('confirm_password', '').strip()
+
+        # Validation
+        if not old_password or not new_password or not confirm_password:
+            messages.error(request, 'Please fill in all password fields.')
+        elif not request.user.check_password(old_password):
+            messages.error(request, 'Current password is incorrect.')
+        elif old_password == new_password:
+            messages.error(request, 'New password must be different from the current password.')
+        else:
+            # Validate password strength
+            strength_check = validate_password_strength(new_password)
+            if not strength_check['is_valid']:
+                for error in strength_check['errors']:
+                    messages.error(request, error)
+            else:
+                # Validate passwords match
+                match_check = validate_password_match(new_password, confirm_password)
+                if not match_check['is_valid']:
+                    messages.error(request, match_check['error'])
+                else:
+                    request.user.set_password(new_password)
+                    request.user.save()
+                    update_session_auth_hash(request, request.user)
+                    messages.success(request, 'Password changed successfully.')
+                    return redirect('dashboard_app:profile')
+
+    return render(request, 'change_password.html')
 
 @login_required
 def help(request):
