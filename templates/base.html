@@ -93,13 +93,13 @@
                 <div class="notification-icon" id="notifBtn" title="Notifications">
                     <i class="fas fa-bell"></i>
                 </div>
-                <div class="user-avatar" id="profileBtn" title="{{ request.user.get_full_name }}">
+                <a href="{% url 'dashboard_app:profile' %}" class="user-avatar" title="Go to My Profile" style="text-decoration: none; cursor: pointer;">
                     {% if request.user.first_name and request.user.last_name %}
                         {{ request.user.first_name|slice:":1"|upper }}{{ request.user.last_name|slice:":1"|upper }}
                     {% else %}
                         ST
                     {% endif %}
-                </div>
+                </a>
             </div>
         </div>
 

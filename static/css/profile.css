@@ -1,0 +1,159 @@
+/* static/css/profile.css */
+
+.profile-page-wrapper {
+    /* Ensure it doesn't scroll inside main-content, fitting perfectly */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    height: calc(100vh - 120px); /* Adjust based on top-bar height and paddings */
+    overflow: hidden; 
+}
+
+.profile-card {
+    width: 100%;
+    max-width: 650px;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-card-body {
+    padding: 24px;
+    overflow: hidden; /* Avoid inner scrolling */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Grid layout for fields to save vertical space */
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 20px;
+    row-gap: 16px;
+    margin-bottom: 20px;
+}
+
+.profile-form-group {
+    margin-bottom: 0;
+}
+
+.profile-label, .detail-label {
+    display: block;
+    margin-bottom: 6px;
+    color: #64748B;
+    font-size: 13px;
+}
+
+.editable-label {
+    font-weight: 600;
+    color: #334155;
+}
+
+.profile-value {
+    font-weight: 500;
+    color: #1E293B;
+    font-size: 14px;
+    padding: 8px 12px;
+    background: #F8FAFC;
+    border-radius: 6px;
+    border: 1px solid #E2E8F0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.profile-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #CBD5E1;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    background: #FFFFFF;
+}
+
+.profile-input:focus {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.profile-help-text {
+    color: #64748B;
+    display: block;
+    margin-top: 4px;
+    font-size: 11px;
+}
+
+/* Details Sections */
+.profile-details-section {
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+}
+
+.student-section {
+    background: #F1F5F9;
+    border: 1px dashed #CBD5E1;
+}
+
+.alumni-section {
+    background: #FFFBEB;
+    border: 1px dashed #FDE68A;
+}
+
+.section-title {
+    margin-top: 0;
+    margin-bottom: 12px;
+    font-size: 14px;
+    padding-bottom: 8px;
+}
+
+.student-section .section-title {
+    color: #334155;
+    border-bottom: 1px solid #CBD5E1;
+}
+
+.alumni-section .section-title {
+    color: #92400E;
+    border-bottom: 1px solid #FDE68A;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.detail-value {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.student-section .detail-value {
+    color: #1E293B;
+}
+
+.alumni-section .detail-value {
+    color: #78350F;
+}
+
+/* Actions */
+.profile-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #E2E8F0;
+    padding-top: 16px;
+    margin-top: 10px;
+}
+
+.change-password-btn {
+    border-color: #CBD5E1;
+    color: #475569;
+}
+
+.change-password-btn:hover {
+    background-color: #F1F5F9;
+    color: #1E293B;
+}

@@ -24,6 +24,15 @@ def staff_dashboard(request):
 # ACCOUNT VIEWS
 @login_required
 def profile(request):
+    if request.method == 'POST':
+        new_contact_number = request.POST.get('contact_number')
+        if new_contact_number:
+            request.user.contact_number = new_contact_number
+            request.user.save()
+            from django.contrib import messages
+            messages.success(request, 'Contact number updated successfully.')
+            return redirect('dashboard_app:profile')
+
     return render(request, 'profile.html')
 
 @login_required
