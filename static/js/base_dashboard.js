@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // Close modals by clicking outside
-    document.querySelectorAll(".modal, .modal-overlay").forEach(modal => {
+    document.querySelectorAll(".modal, .modal-overlay, .nrm__backdrop").forEach(modal => {
         modal.addEventListener("click", e => {
             if (e.target === modal) {
                 modal.classList.remove("show");
@@ -192,6 +192,30 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+
+    // NEW REQUEST MODAL — Delivery / Shipping toggle
+    const nrmDelivPickup  = document.getElementById('nrmDelivPickup');
+    const nrmDelivCourier = document.getElementById('nrmDelivCourier');
+    const nrmShippingBlock = document.getElementById('nrmShippingBlock');
+    const nrmShippingAddr  = document.getElementById('nrmShippingAddr');
+
+    function nrmUpdateDelivery() {
+        if (!nrmShippingBlock) return;
+        const isCourier = nrmDelivCourier && nrmDelivCourier.checked;
+        if (isCourier) {
+            nrmShippingBlock.classList.add('nrm__visible');
+            if (nrmShippingAddr) nrmShippingAddr.required = true;
+        } else {
+            nrmShippingBlock.classList.remove('nrm__visible');
+            if (nrmShippingAddr) { nrmShippingAddr.required = false; nrmShippingAddr.value = ''; }
+        }
+    }
+
+    if (nrmDelivPickup)  nrmDelivPickup.addEventListener('change', nrmUpdateDelivery);
+    if (nrmDelivCourier) nrmDelivCourier.addEventListener('change', nrmUpdateDelivery);
+    nrmUpdateDelivery(); 
+
+
 
     // ===== LOGOUT =====
     const sidebarLogoutBtn  = document.getElementById("sidebarLogoutBtn");

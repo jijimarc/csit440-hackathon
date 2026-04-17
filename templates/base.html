@@ -5,17 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token }}">
-    
+
     <title>{% block title %}CertiRequest — Dashboard{% endblock %}</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v={{ now|date:'U' }}">
     <link rel="stylesheet" href="{% static 'css/base_html.css' %}?v={{ now|date:'U' }}">
     <link rel="stylesheet" href="{% static 'css/request_modal.css' %}">
-    
     {% block extra_css %}{% endblock %}
-    
-    <link rel="icon" type="image/png" href="https://upload.wikimedia.org/wikipedia/en/8/8c/Cebu_Institute_of_Technology_University_logo.png">
+
+    <link rel="icon" type="image/png"
+        href="https://upload.wikimedia.org/wikipedia/en/8/8c/Cebu_Institute_of_Technology_University_logo.png">
 </head>
 <body>
 
@@ -121,58 +121,145 @@
         </div>
     </div>
 
-    <div id="newRequestModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="card-title">New Document Request</h3>
-                <button class="close-btn" onclick="closeModal('newRequestModal')">&times;</button>
+    <div id="newRequestModal" class="nrm__backdrop">
+        <div class="nrm__dialog" role="dialog" aria-modal="true" aria-labelledby="nrmTitle">
+
+            <div class="nrm__header">
+                <div class="nrm__header-left">
+                    <div class="nrm__header-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="nrm__header-text">
+                        <h3 class="nrm__title" id="nrmTitle">New Document Request</h3>
+                        <p class="nrm__subtitle">Fill in the details below to submit your request</p>
+                    </div>
+                </div>
+                <button class="nrm__close-btn" onclick="closeModal('newRequestModal')" aria-label="Close modal">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <div class="modal-body">
-                <form method="POST" action="{% url 'transactions_app:submit_request' %}">
+
+            <div class="nrm__body">
+                <form id="nrmForm" method="POST" action="{% url 'transactions_app:submit_request' %}">
                     {% csrf_token %}
-                    
-                    <div class="form-group" style="margin-bottom: 16px;">
-                        <label style="display: block; margin-bottom: 8px;">Document Type <span style="color:red">*</span></label>
-                        <select name="document_type" class="form-control" style="width: 100%; padding: 8px;" required>
+
+                    <div class="nrm__field" id="nrmFieldDocType">
+                        <label class="nrm__label">
+                            <i class="fas fa-file-contract nrm__label-icon"></i>
+                            Document Type
+                            <span class="nrm__required">*</span>
+                        </label>
+                        <select name="document_type" id="nrmDocTypeSelect" class="nrm__select" required>
                             <option value="" disabled selected>Select a document...</option>
                             <option value="transcript">Transcript of Records</option>
                             <option value="diploma">Diploma</option>
                             <option value="certificate">Certificate of Enrollment</option>
                         </select>
+                        <div class="nrm__field-error" id="nrmDocTypeError">Please select a document type.</div>
                     </div>
 
-                    <div class="form-group" style="margin-bottom: 16px;">
-                        <label style="display: block; margin-bottom: 8px;">Urgency Level <span style="color:red">*</span></label>
-                        <select name="urgency_level" class="form-control" style="width: 100%; padding: 8px;" required>
-                            <option value="Standard">Standard Processing</option>
-                            <option value="Rush">Rush Processing (Additional Fee)</option>
-                        </select>
+                    <div class="nrm__section-divider"></div>
+
+                    <div class="nrm__field">
+                        <label class="nrm__label">
+                            <i class="fas fa-bolt nrm__label-icon"></i>
+                            Urgency Level
+                            <span class="nrm__required">*</span>
+                        </label>
+                        <div class="nrm__urgency-chips">
+                            <label class="nrm__chip">
+                                <input type="radio" name="urgency_level" value="Standard" checked id="nrmUrgStandard">
+                                <div class="nrm__chip-inner">
+                                    <span class="nrm__chip-icon">📋</span>
+                                    <div class="nrm__chip-info">
+                                        <span class="nrm__chip-name">Standard</span>
+                                        <span class="nrm__chip-desc">Regular processing time</span>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="nrm__chip nrm__chip--rush">
+                                <input type="radio" name="urgency_level" value="Rush" id="nrmUrgRush">
+                                <div class="nrm__chip-inner">
+                                    <span class="nrm__chip-icon">⚡</span>
+                                    <div class="nrm__chip-info">
+                                        <span class="nrm__chip-name">Rush</span>
+                                        <span class="nrm__chip-desc">Priority + additional fee</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
-                    <div class="form-group" style="margin-bottom: 16px;">
-                        <label style="display: block; margin-bottom: 8px;">Purpose of Request <span style="color:red">*</span></label>
-                        <textarea name="purpose_of_request" class="form-control" rows="3" style="width: 100%; padding: 8px;" placeholder="e.g., For employment, board examination, etc." required></textarea>
+                    <div class="nrm__section-divider"></div>
+
+                    <div class="nrm__field">
+                        <label class="nrm__label" for="nrmPurpose">
+                            <i class="fas fa-pen-nib nrm__label-icon"></i>
+                            Purpose of Request
+                            <span class="nrm__required">*</span>
+                        </label>
+                        <textarea id="nrmPurpose" name="purpose_of_request" class="nrm__textarea" rows="3"
+                            placeholder="e.g., For employment, board examination, scholarship application…"
+                            required></textarea>
                     </div>
 
-                    <div class="form-group" style="margin-bottom: 16px;">
-                        <label style="display: block; margin-bottom: 8px;">Delivery Mode <span style="color:red">*</span></label>
-                        <select name="delivery_mode" id="deliveryModeSelect" class="form-control" style="width: 100%; padding: 8px;" required>
-                            <option value="Pickup">Campus Pick-up</option>
-                            <option value="Courier">Courier Delivery</option>
-                        </select>
+                    <div class="nrm__section-divider"></div>
+
+                    <div class="nrm__field">
+                        <label class="nrm__label">
+                            <i class="fas fa-truck nrm__label-icon"></i>
+                            Delivery Mode
+                            <span class="nrm__required">*</span>
+                        </label>
+                        <div class="nrm__delivery-tiles">
+                            <label class="nrm__tile" id="nrmTilePickup">
+                                <input type="radio" name="delivery_mode" value="Pickup" checked id="nrmDelivPickup">
+                                <div class="nrm__tile-inner">
+                                    <div class="nrm__tile-icon"><i class="fas fa-university"></i></div>
+                                    <div class="nrm__tile-name">Campus Pick-up</div>
+                                    <div class="nrm__tile-hint">Collect at the Registrar's Office</div>
+                                </div>
+                            </label>
+                            <label class="nrm__tile" id="nrmTileCourier">
+                                <input type="radio" name="delivery_mode" value="Courier" id="nrmDelivCourier">
+                                <div class="nrm__tile-inner">
+                                    <div class="nrm__tile-icon"><i class="fas fa-shipping-fast"></i></div>
+                                    <div class="nrm__tile-name">Courier Delivery</div>
+                                    <div class="nrm__tile-hint">Delivered to your address</div>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
-                    <div class="form-group" id="shippingAddressGroup" style="margin-bottom: 16px;">
-                        <label style="display: block; margin-bottom: 8px;">Shipping Address</label>
-                        <textarea name="shipping_address" class="form-control" rows="2" style="width: 100%; padding: 8px;" placeholder="Leave blank if picking up on campus."></textarea>
+                    <div id="nrmShippingBlock">
+                        <div class="nrm__info-banner">
+                            <i class="fas fa-info-circle"></i>
+                            <p>Please enter a complete shipping address including Barangay, City, Province, and ZIP
+                                code.</p>
+                        </div>
+                        <div class="nrm__field">
+                            <label class="nrm__label" for="nrmShippingAddr">
+                                <i class="fas fa-map-marker-alt nrm__label-icon"></i>
+                                Shipping Address
+                            </label>
+                            <textarea id="nrmShippingAddr" name="shipping_address" class="nrm__textarea" rows="2"
+                                placeholder="House No., Street, Barangay, City, Province, ZIP"></textarea>
+                        </div>
                     </div>
 
-                    <div class="modal-footer" style="margin-top: 24px;">
-                        <button type="button" class="btn-sm btn-outline" onclick="closeModal('newRequestModal')">Cancel</button>
-                        <button type="submit" class="btn-sm btn-primary">Submit Request</button>
-                    </div>
                 </form>
             </div>
+
+            <div class="nrm__footer">
+                <button type="button" class="nrm__btn-cancel" onclick="closeModal('newRequestModal')">
+                    Cancel
+                </button>
+                <button type="submit" class="nrm__btn-submit" form="nrmForm" id="nrmSubmitBtn">
+                    <i class="fas fa-paper-plane"></i>
+                    Submit Request
+                </button>
+            </div>
+
         </div>
     </div>
 
